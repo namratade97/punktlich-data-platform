@@ -156,6 +156,17 @@ if os.path.exists(DB_PATH):
 
         # --- GOLD SECTION ---
         st.header("🥇 Gold Layer: Business Analytics")
+
+        with st.expander("🔍 What are we looking at?"):
+            st.markdown("""
+            **The Business Intelligence Layer**
+            This table represents the final "Gold" stage of the Medallion Architecture. It transforms thousands of raw data points into actionable insights:
+            
+            * **The Grain:** Data is grouped by **Service Type**, **Hour**, and **Day**, allowing us to spot recurring patterns rather than isolated incidents.
+            * **KPIs:** We calculate the **Punctuality Rate** (reliability) and **Average Delay** (severity) to measure the actual "commuter pain".
+            * **Systemic Issues:** The **Disruption Count** scans for "Störung" notices to highlight technical or infrastructure failures that basic delay metrics might miss.
+            * **Performance:** Pre-aggregated via **dbt** for sub-second dashboard loading.
+            """)
         
         df = con.execute(f"SELECT * FROM {gold_schema}.agg_punctuality").df()
 
