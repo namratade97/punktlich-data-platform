@@ -339,11 +339,3 @@ if os.path.exists(DB_PATH):
 else:
     st.info("⏳ Database is being built. Results will appear here shortly.")
 
-col1, col2, col3 = st.columns([2, 1, 2])
-
-with col2:
-    if st.button("♻️ Refresh Dashboard", use_container_width=True):
-        try:
-            st.rerun()
-        except AttributeError:
-            st.experimental_rerun()
