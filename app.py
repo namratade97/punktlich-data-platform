@@ -154,7 +154,7 @@ st.divider()
 if os.path.exists(DB_PATH):
     try:
         con = get_connection()
-        
+
         # Determining schema names
         schemas = con.execute("SELECT schema_name FROM information_schema.schemata").fetchall()
         schemas = [s[0] for s in schemas]
@@ -168,6 +168,28 @@ if os.path.exists(DB_PATH):
             silver_df = con.execute(f"SELECT * FROM {silver_schema}.silver_departures LIMIT 10").df()
             st.dataframe(silver_df)
 
+        st.divider()
+
+        bronze_count = con.execute(f"SELECT COUNT(*) FROM read_parquet('{BRONZE_PATH}')").fetchone()[0]
+        silver_count = con.execute(f"SELECT COUNT(*) FROM {silver_schema}.silver_departures").df().iloc[0,0]
+
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Total Raw Records (Bronze)", f"{bronze_count:,}")
+        c2.metric("Unique Records (Silver)", f"{silver_count:,}")
+        
+        # Calculate deduplication percentage
+        if bronze_count > 0:
+            dup_rate = ((bronze_count - silver_count) / bronze_count) * 100
+            c3.metric("Deduplication Effect", f"-{dup_rate:.1f}%")
+
+        with st.expander("Why do these numbers differ?"):
+            st.markdown(f"""
+            **The Pipeline at work:**
+            * **Bronze** counts every single row across all `{len(bronze_files)}` Parquet files ingested. Since we scrape every few minutes, many trains are captured multiple times.
+            * **Silver** uses dbt to 'de-duplicate' the data. It identifies unique trains by their ID and Scheduled Time, keeping only the most recent status update.
+            * This ensures our **Gold** analytics aren't biased by how many times we scraped a specific hour.
+            """)
+        
         st.divider()
 
         # GOLD SECTION
@@ -218,7 +240,7 @@ if os.path.exists(DB_PATH):
             st.subheader("Punctuality by Hour of Day")
             fig = px.line(filtered_df, x="scheduled_hour", y="punctuality_rate", color="service_type", markers=True)
             st.plotly_chart(fig, use_container_width=True)
-            
+
         else:
             st.warning("No data matches the selected filters.")
 
