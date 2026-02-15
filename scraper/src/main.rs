@@ -104,7 +104,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let count: i32 = conn.query_row(
         "SELECT count(*) FROM silver_departures", 
         [], 
-        |row| row.get::<_, String>(0)
+        |row| row.get::<_, i32>(0)
     ).unwrap_or(0);
 
     if count >= limit {
@@ -136,21 +136,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // let mut last_refresh_hour = Utc::now().hour();
     println!("Lookup Map ready with {} train definitions.", plan_map.len());
 
-    // let json_map = serde_json::to_string_pretty(&plan_map)?;
-    // let mut file = File::create("plan_map.json")?;
-    // file.write_all(json_map.as_bytes())?;
-    // println!("Lookup map exported to plan_map.json");
-
-    // loop {
-    //     let now = Utc::now();
-        
-    //     if now.hour() != last_refresh_hour {
-    //         println!("Hour changed! Refreshing Plan Lookup Map...");
-    //         if let Ok(new_map) = fetch_plan_map(&client, station_id, client_id, api_key).await {
-    //             plan_map = new_map;
-    //             last_refresh_hour = now.hour();
-    //         }
-    //     }
+    
 
         match fetch_departures(&client, station_id, &client_id, &api_key, &plan_map).await {
             Ok(departures) => {
@@ -396,7 +382,6 @@ fn write_parquet(departures: &Vec<Departure>) -> Result<(), Box<dyn std::error::
     )?;
 
     // 4. Write to file
-    // let path = format!("../data/bronze/bronze_{}.parquet", Utc::now().timestamp());
     let path = format!(
             "../data/bronze/bronze_{}.parquet",
             Utc::now().format("%Y%m%d_%H%M%S")
