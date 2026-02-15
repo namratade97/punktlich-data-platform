@@ -30,6 +30,9 @@ jobs:
       - name: Create data directories
         run: mkdir -p data/bronze
 
+      - name: Remove old database to prevent serialization errors
+        run: rm -f data/dbt.duckdb
+
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
