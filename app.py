@@ -58,12 +58,17 @@ st.divider()
 # DATA DISPLAY LOGIC
 if os.path.exists(DB_PATH):
     try:
-        # Using read_only to prevent locking issues in a web environment
-        con = duckdb.connect(DB_PATH, read_only=True)
-        
-        # Pulling from the schema defined in our Gold SQL
-        # df = con.execute("SELECT * FROM gold.agg_punctuality").df()
-        df = con.execute("SELECT * FROM main_gold.agg_punctuality").df()
+        # 1. Use a context manager to ensure the connection closes even if it fails
+        with duckdb.connect(DB_PATH, read_only=True) as con:
+            # 2. Check which schema actually exists: 'main_gold' or 'gold'
+            schema_check = con.execute("SELECT schema_name FROM information_schema.schemata WHERE schema_name IN ('gold', 'main_gold')").fetchall()
+            
+            # 3. Pick the first one found, or default to main_gold
+            schema = schema_check[0][0] if schema_check else "main_gold"
+            
+            # 4. Fetch the data
+            df = con.execute(f"SELECT * FROM {schema}.agg_punctuality").df()
+            
         con.close()
 
         # Sidebar Metrics
