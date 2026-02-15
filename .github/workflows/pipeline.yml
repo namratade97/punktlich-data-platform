@@ -81,7 +81,7 @@ jobs:
       - name: Install HF Hub CLI
         run: pip install huggingface_hub
 
-      - name: Upload Database and Data to Space
+      - name: Upload Database and Data and Streamlit to Space
         env:
           HF_TOKEN: ${{ secrets.HF_ACCESS_TOKEN }}
         run: |
@@ -89,11 +89,22 @@ jobs:
           python -c "
           from huggingface_hub import HfApi
           api = HfApi()
+          repo_id = 'nde97/punktlich-train-analytics-nde97'
+
+          # Upload the updated app.py (The Code)
+          api.upload_file(
+              path_or_fileobj='app.py',
+              path_in_repo='app.py',
+              repo_id=repo_id,
+              repo_type='space',
+              token='${{ env.HF_TOKEN }}'
+          )
+
           # Upload the database
           api.upload_file(
               path_or_fileobj='data/dbt.duckdb',
               path_in_repo='data/dbt.duckdb',
-              repo_id='nde97/punktlich-train-analytics-nde97',
+              repo_id=repo_id,
               repo_type='space',
               token='${{ env.HF_TOKEN }}'
           )
@@ -101,9 +112,8 @@ jobs:
           api.upload_folder(
               folder_path='data/bronze',
               path_in_repo='data/bronze',
-              repo_id='nde97/punktlich-train-analytics-nde97',
+              repo_id=repo_id,
               repo_type='space',
               token='${{ env.HF_TOKEN }}'
           )
           "
-          
