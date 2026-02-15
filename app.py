@@ -213,8 +213,16 @@ if os.path.exists(DB_PATH):
                 use_container_width=True,
                 hide_index=True
             )
+
+            # Chart: Punctuality by Hour
+            st.subheader("Punctuality by Hour of Day")
+            fig = px.line(filtered_df, x="scheduled_hour", y="punctuality_rate", color="service_type", markers=True)
+            st.plotly_chart(fig, use_container_width=True)
+            
         else:
             st.warning("No data matches the selected filters.")
+
+        
             
     except Exception as e:
         st.error(f"Error loading refined data: {e}")
