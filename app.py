@@ -13,7 +13,7 @@ DB_PATH = "data/dbt.duckdb"
 # Updating these to match your specific GitHub details
 GITHUB_REPO = "nde97/punktlich-train-analytics-nde97" 
 # This token is set in Hugging Face Space Secrets
-GITHUB_TOKEN = os.getenv("HF_ACCESS_TOKEN") 
+GITHUB_TOKEN = os.getenv("GH_TOKEN") 
 
 # UI HEADER
 st.title("🚆 Pünktlich: Berlin Hbf Real-Time")
