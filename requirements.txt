@@ -12,7 +12,7 @@ streamlit==1.26.0
 pyarrow==12.0.1
 pandas==2.1.1
 
-# Utilities (let pip resolve requests version automatically)
+# Utilities
 plotly==5.17.0
 
 # Networking (Used to trigger the GitHub Action button)

@@ -6,7 +6,7 @@
 
 with bronze as (
 
-    -- Read all Parquet files in the bronze folder
+    -- Reading all Parquet files in the bronze folder
     select *
     from read_parquet('data/bronze/*.parquet')
 
@@ -14,7 +14,7 @@ with bronze as (
 
 parsed as (
 
-    -- Parse timestamps and clean up columns
+    -- Parsing timestamps and cleaning up columns
     select
         trip_id,
         train,
@@ -29,7 +29,7 @@ parsed as (
 
 deduped as (
 
-    -- Keep only the latest record for each trip_id
+    -- Keeping only the latest record for each trip_id
     select *
     from (
         select
@@ -42,11 +42,10 @@ deduped as (
 ),
 
 final_enrichment as (
-    -- NOW do the extra stuff on the clean, unique rows
     select
         trip_id,
         train,
-        -- 1. Categorize the service
+        -- Categorize the service
         case 
             when train LIKE 'ICE%' or train LIKE 'IC%' or train LIKE 'EC%' or train LIKE 'NJ%' or train LIKE 'RJ%' then 'Long Distance'
             when train LIKE 'RE%' or train LIKE 'RB%' or train LIKE 'OE%' then 'Regional'
@@ -58,20 +57,20 @@ final_enrichment as (
         destination,
         scheduled_time,
         
-        -- 2. Time features for later analysis
+        -- Time features for later analysis
         date_part('hour', scheduled_time) as scheduled_hour,
         dayname(scheduled_time) as day_of_week,
         
         delay,
         
-        -- 3. Punctuality Bucket
+        -- Punctuality Bucket
         case 
             when delay <= 0 then 'On Time'
             when delay < 6 then 'Small Delay'
             else 'Late'
         end as status,
         
-        -- 4. Clean up strings
+        --  Cleaning up strings
         upper(platform) as platform,
         service_notices,
         path

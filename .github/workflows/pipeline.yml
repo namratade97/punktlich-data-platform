@@ -1,7 +1,5 @@
 name: Data Platform Pipeline
 on:
-  # repository_dispatch:
-  #   types: [run-ingestion]
   push:
     branches: [main]       # Syncs UI changes to HF immediately
     paths-ignore:

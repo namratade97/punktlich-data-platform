@@ -25,7 +25,7 @@ struct Departure {
     destination: String,
     path: String,
     scheduled_time: String,
-    platform: String, // NEW
+    platform: String,
     delay: i32,
     disturbances: String, 
 }
@@ -98,7 +98,7 @@ impl TrainEvent {
 struct TrainLine {
     #[serde(rename = "@c")] // Category (ICE)
     category: Option<String>,
-    #[serde(rename = "@n")] // Number (147)
+    #[serde(rename = "@n")] // Number (e.g. 147)
     number: Option<String>,
 }
 
@@ -141,8 +141,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let plan_map = fetch_plan_map(&client, station_id, &client_id, &api_key).await?;
     // let mut last_refresh_hour = Utc::now().hour();
     println!("Lookup Map ready with {} train definitions.", plan_map.len());
-
-    
 
         match fetch_departures(&client, station_id, &client_id, &api_key, &plan_map).await {
             Ok(departures) => {
@@ -356,7 +354,7 @@ async fn fetch_departures(
 
 
 fn write_parquet(departures: &Vec<Departure>) -> Result<(), Box<dyn std::error::Error>> {
-    // 1. Create the data arrays
+    // Creating the data arrays
     let trip_id_array = Arc::new(StringArray::from(departures.iter().map(|d| d.trip_id.as_str()).collect::<Vec<&str>>()));
     let train_array = Arc::new(StringArray::from(departures.iter().map(|d| d.train.as_str()).collect::<Vec<&str>>()));
     let dest_array = Arc::new(StringArray::from(departures.iter().map(|d| d.destination.as_str()).collect::<Vec<&str>>()));
@@ -366,7 +364,7 @@ fn write_parquet(departures: &Vec<Departure>) -> Result<(), Box<dyn std::error::
     let dist_array = Arc::new(StringArray::from(departures.iter().map(|d| d.disturbances.as_str()).collect::<Vec<&str>>()));
     let platform_array = Arc::new(StringArray::from(departures.iter().map(|d| d.platform.as_str()).collect::<Vec<&str>>()));
 
-    // 2. Define the Schema 
+    // Defining the Schema 
     let schema = Arc::new(Schema::new(vec![
         Field::new("trip_id", DataType::Utf8, false),
         Field::new("train", DataType::Utf8, false),
@@ -378,7 +376,7 @@ fn write_parquet(departures: &Vec<Departure>) -> Result<(), Box<dyn std::error::
         Field::new("service_notices", DataType::Utf8, true),
     ]));
 
-    // 3. Create the Batch
+    // Creating the Batch
     let batch = RecordBatch::try_new(
         schema.clone(), 
         vec![
@@ -387,7 +385,7 @@ fn write_parquet(departures: &Vec<Departure>) -> Result<(), Box<dyn std::error::
         ]
     )?;
 
-    // 4. Write to file
+    // Writing to file
     let path = format!(
             "../data/bronze/bronze_{}.parquet",
             Utc::now().format("%Y%m%d_%H%M%S")

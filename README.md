@@ -9,4 +9,4 @@ pinned: false
 ---
 
 # 🚆 Pünktlich: Berlin Hbf Real-Time
-Analyzing train reliability using Rust, dbt, powered by Terraform.
+Analyzing train reliability using Rust, dbt and DuckDB, powered by Terraform and GitHub Actions.

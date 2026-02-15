@@ -26,7 +26,7 @@ final as (
             1
         ) as delay_rate,
 
-        -- Add this line for your Streamlit metric:
+        -- For Streamlit metric:
         count_if(service_notices LIKE '%Störung%') as total_disruptions,
         
         round(count_if(service_notices LIKE '%Störung%') * 100.0 / count(*), 1) as disruption_rate
