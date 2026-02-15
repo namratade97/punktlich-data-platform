@@ -54,7 +54,7 @@ with st.sidebar:
     with st.expander("🟣 Infrastructure as Code", expanded=False):
         st.markdown("""
         The foundation of this Space was provisioned using **Terraform**. 
-        **[View Terraform Configuration on GitHub](https://github.com/namratade97/punktlich-data-platform/tree/main/terraform)**
+        **[View Terraform Configuration on GitHub.](https://github.com/namratade97/punktlich-data-platform/tree/main/terraform)**
         
         By treating the UI as code, we ensure the environment is reproducible 
         and version-controlled, moving away from "manual clicks" in the console.
@@ -72,7 +72,7 @@ with st.sidebar:
 
     with st.expander("🚧 Engineering Constraints", expanded=False):
         st.markdown("""
-        **Resource-First Design** Operating on the **Free Tier** required specific strategic choices:
+        **Resource-First Design** Operating on the **Free Tier** required a few specific strategic choices:
         * **DuckDB:** Chosen over PostgreSQL to avoid database hosting costs and latency.
         * **Parquet:** Used for "Bronze" storage to minimize disk space and speed up dbt runs.
         * **Transient Compute:** Using GitHub Runners to do the "heavy lifting" so the Streamlit UI remains responsive.
@@ -280,5 +280,9 @@ if os.path.exists(DB_PATH):
 else:
     st.info("⏳ Database is being built. Results will appear here shortly.")
 
-if st.button("🔄 Refresh Dashboard"):
-    st.rerun()
+with st.container(horizontal_alignment="center"):
+    if st.button("♻️ Refresh Dashboard"):
+        try:
+            st.rerun()
+        except AttributeError:
+            st.experimental_rerun()
