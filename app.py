@@ -11,7 +11,7 @@ st.set_page_config(page_title="Pünktlich - Berlin Hbf", layout="wide")
 DB_PATH = "data/dbt.duckdb"
 
 # Updating these to match your specific GitHub details
-GITHUB_REPO = "nde97/punktlich-train-analytics-nde97" 
+GITHUB_REPO = "nde97/punktlich-data-platform"
 # This token is set in Hugging Face Space Secrets
 GITHUB_TOKEN = os.getenv("GH_TOKEN") 
 
