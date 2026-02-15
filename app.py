@@ -280,8 +280,10 @@ if os.path.exists(DB_PATH):
 else:
     st.info("⏳ Database is being built. Results will appear here shortly.")
 
-with st.container(horizontal_alignment="center"):
-    if st.button("♻️ Refresh Dashboard"):
+col1, col2, col3 = st.columns([2, 1, 2])
+
+with col2:
+    if st.button("♻️ Refresh Dashboard", use_container_width=True):
         try:
             st.rerun()
         except AttributeError:
