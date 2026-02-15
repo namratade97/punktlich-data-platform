@@ -1,19 +1,31 @@
 name: Data Platform Pipeline
 on:
+  # repository_dispatch:
+  #   types: [run-ingestion]
+  push:
+    branches: [main]       # Syncs UI changes to HF immediately
+  paths-ignore:
+      - 'data/**'
   repository_dispatch:
-    types: [run-ingestion] # Triggered by the Streamlit button
+    types: [run-ingestion] # Triggered by the Streamlit button for data
 
 jobs:
   ingest-and-transform:
+    if: github.event_name == 'repository_dispatch'
     runs-on: ubuntu-latest
+    permissions: # Required to push data back to the repo
+      contents: write
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Needed for committing back
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
       - name: Run Rust Scraper
         run: |
+          mkdir -p data/bronze
           cd scraper
           cargo run --release
         env:
@@ -32,3 +44,27 @@ jobs:
         run: |
           dbt deps
           dbt run --target prod
+
+      # COMMIT THE DATA 
+      - name: Commit and Push updated data
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/
+          # Only commit if there are actually changes in the data folder
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Update data: $(date)" && git push)
+
+  sync-to-hub:
+    needs: ingest-and-transform
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+      - name: Push to Hub
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+        run: |
+          # Use the HF_TOKEN to push the newly committed data to the Space
+          git push --force https://nde97:$HF_TOKEN@huggingface.co/spaces/nde97/punktlich-train-analytics-nde97 main
