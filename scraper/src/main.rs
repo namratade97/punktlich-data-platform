@@ -51,7 +51,7 @@ struct Stop {
     train_line: Option<TrainLine>,
 }
 
-#[derive(Debug, Deserialize, Clone)]
+// #[derive(Debug, Deserialize, Clone)]
 // struct Message {
 //     #[serde(rename = "@t")] 
 //     msg_type: Option<String>,      
