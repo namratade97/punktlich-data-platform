@@ -62,7 +62,8 @@ if os.path.exists(DB_PATH):
         con = duckdb.connect(DB_PATH, read_only=True)
         
         # Pulling from the schema defined in our Gold SQL
-        df = con.execute("SELECT * FROM gold.agg_punctuality").df()
+        # df = con.execute("SELECT * FROM gold.agg_punctuality").df()
+        df = con.execute("SELECT * FROM main_gold.agg_punctuality").df()
         con.close()
 
         # Sidebar Metrics
