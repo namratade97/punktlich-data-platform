@@ -267,7 +267,31 @@ if os.path.exists(DB_PATH):
 
             # Chart: Punctuality by Hour
             st.subheader("Punctuality by Hour of Day")
-            fig = px.line(filtered_df, x="scheduled_hour", y="punctuality_rate", color="service_type", markers=True)
+            chart_df = filtered_df.sort_values('scheduled_hour')
+
+            fig = px.bar(
+                chart_df, 
+                x="scheduled_hour", 
+                y="punctuality_rate", 
+                color="service_type", 
+                barmode="group",
+                labels={
+                    "scheduled_hour": "Hour of Day", 
+                    "punctuality_rate": "Punctuality (%)",
+                    "service_type": "Service"
+                },
+                template="plotly_white"
+            )
+
+            fig.update_layout(
+                xaxis=dict(
+                    tickmode='linear',
+                    tick0=0,
+                    dtick=1
+                ),
+                yaxis=dict(range=[0, 105])
+            )
+
             st.plotly_chart(fig, use_container_width=True)
 
         else:
