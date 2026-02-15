@@ -1,4 +1,4 @@
-use chrono::{Utc, NaiveDateTime, Timelike, Datelike};
+use chrono::{Utc, NaiveDateTime};
 use quick_xml::de::from_str;
 use reqwest::Client;
 use serde::Deserialize;
@@ -104,7 +104,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let count: i32 = conn.query_row(
         "SELECT count(*) FROM silver_departures", 
         [], 
-        |row| row.get(0)
+        |row| row.get::<_, String>(0)
     ).unwrap_or(0);
 
     if count >= limit {
