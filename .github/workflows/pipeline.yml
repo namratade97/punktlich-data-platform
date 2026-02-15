@@ -76,14 +76,23 @@ jobs:
           fetch-depth: 0
           lfs: true
 
-      # Ensuring the runner has the data the previous job just pushed
       - name: Pull latest data from GitHub
         run: git pull origin main
+
+      - name: Install and Setup Git LFS
+        run: |
+          git lfs install
+          # Explicitly track duckdb files as LFS
+          git lfs track "data/*.duckdb"
+          # Ensure .gitattributes is updated and committed if it changed
+          git add .gitattributes
+          # We don't need to commit here because the file is already in the folder
+          # We just need to ensure Git knows it's an LFS file for the push
 
       - name: Push to Hub
         env:
           HF_ACCESS_TOKEN: ${{ secrets.HF_ACCESS_TOKEN }}
         run: |
-          # Now the runner has the new dbt.duckdb, so we push it to HF
+          # The force push will now treat the duckdb file as an LFS pointer
           git push --force https://nde97:$HF_ACCESS_TOKEN@huggingface.co/spaces/nde97/punktlich-train-analytics-nde97 main
           
