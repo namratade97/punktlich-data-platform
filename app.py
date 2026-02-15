@@ -239,34 +239,34 @@ if os.path.exists(DB_PATH):
         # Creating columns to make the filter look more integrated
         col_filter, col_spacer = st.columns([2, 1]) 
 
+        # Updated CSS for DB Red Tags with visible 'X' buttons
         st.markdown("""
             <style>
-            /* The main box container */
             div[data-baseweb="select"] > div {
                 background-color: white !important;
-                border: 2px solid #f01414 !important; 
-                border-radius: 4px; 
-                color: black !important;
+                border: 2px solid #f01414 !important;
+                border-radius: 4px;
             }
 
-            /* Fix the Arrow and Clear icons visibility */
             div[data-baseweb="select"] svg {
-                fill: #f01414 !important; 
+                fill: #f01414 !important;
             }
 
-            /* The selected 'pills' (Tags) */
             span[data-baseweb="tag"] {
-                background-color: #f01414 !important; 
+                background-color: #f01414 !important;
                 color: white !important;
                 border-radius: 2px;
+                padding-right: 5px;
             }
 
-            /* Remove the tag close 'X' hover effect background to keep it clean */
-            span[data-baseweb="tag"] div {
-                color: white !important;
+            span[data-baseweb="tag"] svg {
+                fill: white !important;
             }
-            
-            /* Style the label above the dropdown */
+
+            span[data-baseweb="tag"] role[button]:hover {
+                background-color: rgba(255, 255, 255, 0.2) !important;
+            }
+
             label[data-testid="stWidgetLabel"] p {
                 color: #f01414 !important;
                 font-weight: bold;
