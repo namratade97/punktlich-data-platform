@@ -52,19 +52,25 @@ struct Stop {
 }
 
 #[derive(Debug, Deserialize, Clone)]
+// struct Message {
+//     #[serde(rename = "@t")] 
+//     msg_type: Option<String>,      
+//     #[serde(rename = "@cat")] 
+//     category: Option<String>,     
+//     #[serde(rename = "@from")] 
+//     valid_from: Option<String>,
+//     #[serde(rename = "@to")] 
+//     valid_to: Option<String>,
+//     #[serde(rename = "@ts")] 
+//     timestamp: Option<String>,    
+//     #[serde(rename = "@ts-tts")] 
+//     ts_tts: Option<String>,       
+// }
+
+#[derive(Debug, Deserialize, Clone)]
 struct Message {
-    #[serde(rename = "@t")] 
-    msg_type: Option<String>,      
     #[serde(rename = "@cat")] 
     category: Option<String>,     
-    #[serde(rename = "@from")] 
-    valid_from: Option<String>,
-    #[serde(rename = "@to")] 
-    valid_to: Option<String>,
-    #[serde(rename = "@ts")] 
-    timestamp: Option<String>,    
-    #[serde(rename = "@ts-tts")] 
-    ts_tts: Option<String>,       
 }
 
 
@@ -132,7 +138,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     println!("Building Plan Lookup Map...");
     
-    let mut plan_map = fetch_plan_map(&client, station_id, &client_id, &api_key).await?;
+    let plan_map = fetch_plan_map(&client, station_id, &client_id, &api_key).await?;
     // let mut last_refresh_hour = Utc::now().hour();
     println!("Lookup Map ready with {} train definitions.", plan_map.len());
 
