@@ -77,7 +77,8 @@ jobs:
           lfs: true
       - name: Push to Hub
         env:
-          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          HF_ACCESS_TOKEN: ${{ secrets.HF_ACCESS_TOKEN }}
         run: |
-          # Use the HF_TOKEN to push the newly committed data to the Space
-          git push --force https://nde97:$HF_TOKEN@huggingface.co/spaces/nde97/punktlich-train-analytics-nde97 main
+          # Use the HF_ACCESS_TOKEN to push the newly committed data to the Space
+          git push --force https://nde97:$HF_ACCESS_TOKEN@huggingface.co/spaces/nde97/punktlich-train-analytics-nde97 main
+          
