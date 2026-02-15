@@ -1,0 +1,10 @@
+# profiles.yml
+punktlich_data_platform:
+  target: prod
+  outputs:
+    prod:
+      type: duckdb
+      path: data/dbt.duckdb
+      extensions:
+        - parquet
+      threads: 1

@@ -1,0 +1,22 @@
+# dbt-core + DuckDB adapter
+dbt-core==1.6.1
+dbt-duckdb==1.6.1
+
+# Evidently
+evidently==0.7.20
+
+# Streamlit
+streamlit==1.26.0
+
+# Parquet & data handling
+pyarrow==12.0.1
+pandas==2.1.1
+
+# Utilities (let pip resolve requests version automatically)
+plotly==5.17.0
+
+# Networking (Used to trigger the GitHub Action button)
+requests==2.32.5
+
+# Data Quality
+evidently==0.7.20

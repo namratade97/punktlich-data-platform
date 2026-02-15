@@ -8,6 +8,13 @@ on:
       - 'data/**'
   repository_dispatch:
     types: [run-ingestion] # Triggered by the Streamlit button for data
+  # schedule:
+  #   - cron: '0 * * * *'    # Every hour on the hour
+
+concurrency:
+  group: data-platform
+  cancel-in-progress: false # This ensures the first user's run finishes safely
+
 
 jobs:
   ingest-and-transform:
@@ -19,6 +26,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Needed for committing back
+
+      - name: Create data directories
+        run: mkdir -p data/bronze
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
@@ -43,7 +53,7 @@ jobs:
       - name: Run dbt (Silver & Gold)
         run: |
           dbt deps
-          dbt run --target prod
+          dbt run --target prod --profiles-dir .
 
       # COMMIT THE DATA 
       - name: Commit and Push updated data
@@ -55,6 +65,9 @@ jobs:
           git diff --quiet && git diff --staged --quiet || (git commit -m "Update data: $(date)" && git push)
 
   sync-to-hub:
+    if: |
+      always() && 
+      (github.event_name == 'push' || needs.ingest-and-transform.result == 'success')
     needs: ingest-and-transform
     runs-on: ubuntu-latest
     steps:
