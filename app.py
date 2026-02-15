@@ -10,8 +10,13 @@ st.set_page_config(page_title="Pünktlich - Berlin Hbf", layout="wide")
 # Using a relative path for the database file in the repo
 DB_PATH = "data/dbt.duckdb"
 
+@st.cache_resource
+def get_connection():
+    # Using read_only=True is critical for web deployments
+    return duckdb.connect("data/dbt.duckdb", read_only=True)
+
 if os.path.exists(DB_PATH):
-    con = duckdb.connect(DB_PATH)
+    con = get_connection()
     # Check if the gold table exists
     tables = con.execute("SHOW TABLES").fetchall()
     print(f"Tables found: {tables}")
@@ -58,18 +63,21 @@ st.divider()
 # DATA DISPLAY LOGIC
 if os.path.exists(DB_PATH):
     try:
-        # 1. Use a context manager to ensure the connection closes even if it fails
-        with duckdb.connect(DB_PATH, read_only=True) as con:
-            # 2. Check which schema actually exists: 'main_gold' or 'gold'
-            schema_check = con.execute("SELECT schema_name FROM information_schema.schemata WHERE schema_name IN ('gold', 'main_gold')").fetchall()
-            
-            # 3. Pick the first one found, or default to main_gold
-            schema = schema_check[0][0] if schema_check else "main_gold"
-            
-            # 4. Fetch the data
-            df = con.execute(f"SELECT * FROM {schema}.agg_punctuality").df()
-            
-        con.close()
+        # Use the CACHED connection only
+        con = get_connection()
+        
+        # Check which schema actually exists: 'main_gold' or 'gold'
+        schema_check = con.execute(
+            "SELECT schema_name FROM information_schema.schemata WHERE schema_name IN ('gold', 'main_gold')"
+        ).fetchall()
+        
+        # Pick the first one found, or default to main_gold
+        schema = schema_check[0][0] if schema_check else "main_gold"
+        
+        # Fetch the data using the cached connection
+        df = con.execute(f"SELECT * FROM {schema}.agg_punctuality").df()
+
+        # con.close()
 
         # Sidebar Metrics
         st.sidebar.header("Filter")
