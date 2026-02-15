@@ -238,6 +238,22 @@ if os.path.exists(DB_PATH):
         # MAIN SECTION FILTERS
         # Creating columns to make the filter look more integrated
         col_filter, col_spacer = st.columns([2, 1]) 
+
+        st.markdown("""
+        <style>
+        /* Targets the multiselect container */
+        div[data-baseweb="select"] > div {
+            background-color: #f0f2f6; 
+            border: 2px solid #d1d5db; 
+            border-radius: 10px;
+        }
+        
+        span[data-baseweb="tag"] {
+            background-color: #007bff !important;
+            color: white !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
         
         with col_filter:
             service_options = sorted(df['service_type'].unique())
