@@ -105,7 +105,11 @@ raw_xml_sample = """
 </timetable>
 """
 
-st.code(raw_xml_sample, language="xml")
+
+
+with st.expander("Peek into an example of the raw XML (Direct from DB API)"):
+        st.code(raw_xml_sample, language="xml")
+
 st.caption("Above: A simplified example of the raw XML response from the /plan and /fchg endpoints.")
 
 
