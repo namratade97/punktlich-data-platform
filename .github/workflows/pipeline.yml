@@ -75,10 +75,15 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
+
+      # Ensuring the runner has the data the previous job just pushed
+      - name: Pull latest data from GitHub
+        run: git pull origin main
+
       - name: Push to Hub
         env:
           HF_ACCESS_TOKEN: ${{ secrets.HF_ACCESS_TOKEN }}
         run: |
-          # Use the HF_ACCESS_TOKEN to push the newly committed data to the Space
+          # Now the runner has the new dbt.duckdb, so we push it to HF
           git push --force https://nde97:$HF_ACCESS_TOKEN@huggingface.co/spaces/nde97/punktlich-train-analytics-nde97 main
           

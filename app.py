@@ -10,6 +10,14 @@ st.set_page_config(page_title="Pünktlich - Berlin Hbf", layout="wide")
 # Using a relative path for the database file in the repo
 DB_PATH = "data/dbt.duckdb"
 
+if os.path.exists(DB_PATH):
+    con = duckdb.connect(DB_PATH)
+    # Check if the gold table exists
+    tables = con.execute("SHOW TABLES").fetchall()
+    print(f"Tables found: {tables}")
+else:
+    print("Database file not found yet!")
+
 # Updating these to match your specific GitHub details
 GITHUB_REPO = "namratade97/punktlich-data-platform"
 # This token is set in Hugging Face Space Secrets
