@@ -49,6 +49,35 @@ with st.sidebar:
     st.write("🏗️ **Transformation:** dbt (Silver/Gold)")
     st.write("🚀 **CI/CD:** GitHub Actions")
 
+    st.header("🏗️ The Architecture Story")
+    
+    with st.expander("🟣 Infrastructure as Code", expanded=False):
+        st.markdown("""
+        The foundation of this Space was provisioned using **Terraform**. 
+        **[View Terraform Configuration on GitHub](https://github.com/namratade97/punktlich-data-platform/tree/main/terraform)**
+        
+        By treating the UI as code, we ensure the environment is reproducible 
+        and version-controlled, moving away from "manual clicks" in the console.
+        """)
+
+    with st.expander("🔗 Orchestration: GitHub Actions", expanded=False):
+        st.markdown("""
+        To keep the project lightweight and cost-effective, I used **GitHub Actions** as our orchestrator. 
+        
+        Much like **Apache Airflow**, it handles:
+        * **Scheduling:** (CRON jobs for data collection).
+        * **Dependency Graphs:** (Rust Scraper → dbt Transformation → HF Sync).
+        * **Logs & Alerts:** Tracking pipeline health without the overhead of a dedicated Airflow server.
+        """)
+
+    with st.expander("🚧 Engineering Constraints", expanded=False):
+        st.markdown("""
+        **Resource-First Design** Operating on the **Free Tier** required specific strategic choices:
+        * **DuckDB:** Chosen over PostgreSQL to avoid database hosting costs and latency.
+        * **Parquet:** Used for "Bronze" storage to minimize disk space and speed up dbt runs.
+        * **Transient Compute:** Using GitHub Runners to do the "heavy lifting" so the Streamlit UI remains responsive.
+        """)
+
 # ACTION BUTTON
 def trigger_ingestion():
     url = f"https://api.github.com/repos/{GITHUB_REPO}/dispatches"
@@ -185,7 +214,7 @@ if os.path.exists(DB_PATH):
         with st.expander("Why do these numbers differ?"):
             st.markdown(f"""
             **The Pipeline at work:**
-            * **Bronze** counts every single row across all `{len(bronze_files)}` Parquet files ingested. Since we scrape every few minutes, many trains are captured multiple times.
+            * **Bronze** counts every single row across all `{len(bronze_files)}` Parquet files from past runs ingested. Since we ideally scrape every few minutes, many trains are captured multiple times.
             * **Silver** uses dbt to 'de-duplicate' the data. It identifies unique trains by their ID and Scheduled Time, keeping only the most recent status update.
             * This ensures our **Gold** analytics aren't biased by how many times we scraped a specific hour.
             """)
