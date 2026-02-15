@@ -4,7 +4,7 @@ on:
   #   types: [run-ingestion]
   push:
     branches: [main]       # Syncs UI changes to HF immediately
-  paths-ignore:
+    paths-ignore:
       - 'data/**'
   repository_dispatch:
     types: [run-ingestion] # Triggered by the Streamlit button for data
