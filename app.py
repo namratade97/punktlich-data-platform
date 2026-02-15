@@ -240,21 +240,40 @@ if os.path.exists(DB_PATH):
         col_filter, col_spacer = st.columns([2, 1]) 
 
         st.markdown("""
-        <style>
-        /* Targets the multiselect container */
-        div[data-baseweb="select"] > div {
-            background-color: #f0f2f6; 
-            border: 2px solid #d1d5db; 
-            border-radius: 10px;
-        }
-        
-        span[data-baseweb="tag"] {
-            background-color: #007bff !important;
-            color: white !important;
-        }
-        </style>
-        """, unsafe_allow_html=True)
-        
+            <style>
+            /* The main box container */
+            div[data-baseweb="select"] > div {
+                background-color: white !important;
+                border: 2px solid #f01414 !important; 
+                border-radius: 4px; 
+                color: black !important;
+            }
+
+            /* Fix the Arrow and Clear icons visibility */
+            div[data-baseweb="select"] svg {
+                fill: #f01414 !important; 
+            }
+
+            /* The selected 'pills' (Tags) */
+            span[data-baseweb="tag"] {
+                background-color: #f01414 !important; 
+                color: white !important;
+                border-radius: 2px;
+            }
+
+            /* Remove the tag close 'X' hover effect background to keep it clean */
+            span[data-baseweb="tag"] div {
+                color: white !important;
+            }
+            
+            /* Style the label above the dropdown */
+            label[data-testid="stWidgetLabel"] p {
+                color: #f01414 !important;
+                font-weight: bold;
+            }
+            </style>
+            """, unsafe_allow_html=True)
+
         with col_filter:
             service_options = sorted(df['service_type'].unique())
             selected_service = st.multiselect(
